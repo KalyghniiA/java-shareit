@@ -71,4 +71,11 @@ public class ItemController {
         log.info("Предметы отправлены");
         return items;
     }
+
+    @DeleteMapping("{itemId}")
+    public void deleteItem(@PathVariable Long itemId) {
+        log.info("получен запрос на удаление товара");
+        itemService.deleteItem(itemId);
+        log.info("предмет удален");
+    }
 }
