@@ -49,7 +49,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handlerOtherException(Exception e) {
-        log.error(String.valueOf(e.getClass()));
+        log.error("error", e);
         return new ErrorResponse("other", e.getMessage());
     }
 }

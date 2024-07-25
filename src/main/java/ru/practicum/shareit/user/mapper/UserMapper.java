@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.mapper;
 
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.model.User;
 
 public class UserMapper {
@@ -12,14 +11,6 @@ public class UserMapper {
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         return user;
-    }
-
-    public User fromUserUpdate(UserUpdateDto userDto, User user) {
-       User newUser = new User();
-       newUser.setId(user.getId());
-       newUser.setName(userDto.getName() == null ? user.getName() : userDto.getName());
-       newUser.setEmail(userDto.getEmail() == null ? user.getEmail() : userDto.getEmail());
-       return newUser;
     }
 
     public UserDto toUserDto(User user) {

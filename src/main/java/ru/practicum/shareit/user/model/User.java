@@ -11,7 +11,6 @@ import lombok.Data;
 public class User {
     private Long id;
     @NotBlank
-    @Size(min = 3, max = 100)
     @NotNull
     private String name;
     @Email
