@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Long userId, UserUpdateDto userDto) {
         User oldUser = userRepository.getById(userId).orElseThrow(() -> new NotFoundException("Данного пользователя нет в базе"));
-        User newUser = userMapper.fromUserUpdate(userDto, oldUser);
+        User newUser = fromUserUpdateToUser(userDto, oldUser);
         return userMapper.toUserDto(userRepository.update(newUser));
     }
 
@@ -50,5 +50,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findAll() {
         return userRepository.findAll().stream().map(userMapper::toUserDto).toList();
+    }
+
+    private User fromUserUpdateToUser(UserUpdateDto userDto, User user) {
+        User newUser = new User();
+        newUser.setId(user.getId());
+        newUser.setName(userDto.getName() == null ? user.getName() : userDto.getName());
+        newUser.setEmail(userDto.getEmail() == null ? user.getEmail() : userDto.getEmail());
+        return newUser;
     }
 }

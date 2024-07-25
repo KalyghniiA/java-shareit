@@ -28,12 +28,16 @@ public class MemoryUserRepository implements UserRepository {
     @Override
     public User update(User newUser) {
         String oldEmail = users.get(newUser.getId()).getEmail();
-        emails.remove(oldEmail);
-        if (emails.contains(newUser.getEmail())) {
-            throw new NotValidEmailException("Пользователь с данным email уже есть в базе");
+
+        if (!oldEmail.equals(newUser.getEmail())) {
+            if (emails.contains(newUser.getEmail())) {
+                throw new NotValidEmailException("Пользователь с данным email уже есть в базе");
+            } else {
+                emails.remove(oldEmail);
+                emails.add(newUser.getEmail());
+            }
         }
         users.replace(newUser.getId(), newUser);
-        emails.add(newUser.getEmail());
         return newUser;
     }
 

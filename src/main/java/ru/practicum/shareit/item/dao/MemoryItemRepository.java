@@ -20,11 +20,7 @@ public class MemoryItemRepository implements ItemRepository {
     public Item save(Item item) {
         item.setId(currentId++);
         items.put(item.getId(), item);
-        if (itemsForUser.containsKey(item.getOwner())) {
-            itemsForUser.get(item.getOwner()).add(item);
-        } else {
-            itemsForUser.put(item.getOwner(), new ArrayList<>(Collections.singletonList(item)));
-        }
+        itemsForUser.computeIfAbsent(item.getOwner().getId(), k -> new ArrayList<>()).add(item);
         return item;
     }
 
@@ -32,15 +28,17 @@ public class MemoryItemRepository implements ItemRepository {
     public Item update(Item item) {
         Item oldItem = items.get(item.getId());
         items.replace(item.getId(), item);
-        itemsForUser.get(item.getOwner()).remove(oldItem);
-        itemsForUser.get(item.getOwner()).add(item);
+        itemsForUser.get(item.getOwner().getId()).remove(oldItem);
+        itemsForUser.get(item.getOwner().getId()).add(item);
         return item;
     }
 
     @Override
     public void delete(Long itemId) {
         Item item = items.remove(itemId);
-        itemsForUser.get(item.getOwner()).remove(item);
+        if (item != null) {
+            itemsForUser.get(item.getOwner().getId()).remove(item);
+        }
     }
 
     @Override
