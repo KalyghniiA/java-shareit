@@ -50,7 +50,8 @@ public class ItemController {
             @PathVariable long itemId,
             @RequestHeader("X-Sharer-User-Id") @NotNull long userId) {
         log.info("Получен запрос на обновление данных о предмете");
-        ItemDto newItem = itemService.updateItem(itemUpdateDto, itemId, userId);
+        itemUpdateDto.setId(itemId);
+        ItemDto newItem = itemService.updateItem(itemUpdateDto, userId);
         log.info("Данные изменены");
         return newItem;
     }
