@@ -42,9 +42,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(ItemUpdateDto itemDto, Long itemId, Long userId) {
+    public ItemDto updateItem(ItemUpdateDto itemDto, Long userId) {
         User user = userRepository.getById(userId).orElseThrow(() -> new NotFoundException("Данного пользователя нет в базе"));
-        Item item = itemRepository.getById(itemId).orElseThrow(() -> new NotFoundException("Данного предмета нет в базе"));
+        Item item = itemRepository.getById(itemDto.getId()).orElseThrow(() -> new NotFoundException("Данного предмета нет в базе"));
         if (!item.getOwner().getId().equals(user.getId())) {
             throw new AccessRightsException("Данный пользователь не является владельцем вещи");
         }
