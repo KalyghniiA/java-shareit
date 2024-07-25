@@ -1,11 +1,13 @@
 package ru.practicum.shareit.user.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dao.UserRepository;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper = new UserMapper();
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -21,27 +24,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
-        for (User elem: userRepository.findAll()) {
-            if (elem.getEmail().equals(user.getEmail())) {
-                throw new ValidationException("Такой email уже есть в базе");
-            }
-        }
-        return userRepository.save(user);
+    public UserDto createUser(UserCreateDto userDto) {
+        User user = userMapper.fromUserCreate(userDto);
+        return userMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
-    public User updateUser(Long userId, JsonNode userNode) {
-        userRepository.getById(userId).orElseThrow(() -> new NotFoundException("Данного пользователя нет в базе"));
-        String email = userNode.path("email").isMissingNode() ? null : userNode.get("email").asText();
-        if (email != null) {
-            for (User user: userRepository.findAll()) {
-                if (email.equals(user.getEmail()) && !user.getId().equals(userId)) {
-                    throw new ValidationException("Такой email уже есть в базе");
-                }
-            }
-        }
-        return userRepository.update(userId, userNode);
+    public UserDto updateUser(Long userId, UserUpdateDto userDto) {
+        User oldUser = userRepository.getById(userId).orElseThrow(() -> new NotFoundException("Данного пользователя нет в базе"));
+        User newUser = userMapper.fromUserUpdate(userDto, oldUser);
+        return userMapper.toUserDto(userRepository.update(newUser));
     }
 
     @Override
@@ -51,12 +43,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long userId) {
-        return userRepository.getById(userId).orElseThrow(() -> new NotFoundException("Данного пользователя нет в базе"));
+    public UserDto getUserById(Long userId) {
+        return userMapper.toUserDto(userRepository.getById(userId).orElseThrow(() -> new NotFoundException("Данного пользователя нет в базе")));
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream().map(userMapper::toUserDto).toList();
     }
 }

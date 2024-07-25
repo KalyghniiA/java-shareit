@@ -1,18 +1,19 @@
 package ru.practicum.shareit.user.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.util.List;
 
 public interface UserService {
-    User createUser(User user);
+    UserDto createUser(UserCreateDto user);
 
-    User updateUser(Long userId, JsonNode userNode);
+    UserDto updateUser(Long userId, UserUpdateDto userNode);
 
     void deleteUser(Long userId);
 
-    User getUserById(Long userId);
+    UserDto getUserById(Long userId);
 
-    List<User> findAll();
+    List<UserDto> findAll();
 }
